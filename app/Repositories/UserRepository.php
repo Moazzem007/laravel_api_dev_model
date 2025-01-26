@@ -49,4 +49,16 @@ class UserRepository implements UserRepositoryInterface
         $user->delete();
         return $user;
     }
+
+    public function usersWithRoles()
+    {
+        return User::with('roles')->get();
+    }
+
+    public function getUserRoles($id)
+    {
+        return User::findOrFail($id)->roles;
+    }
+
+
 }

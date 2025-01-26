@@ -68,6 +68,18 @@ class User extends Authenticatable
         }
     }
 
+    // revoke a role from the user
+    public function revokeRole($role)
+    {
+        if (is_string($role)) {
+            $role = Role::where('name', $role)->first();
+        }
+
+        if ($role) {
+            $this->roles()->detach($role);
+        }
+    }
+
     public function permissions()
     {
         return $this->belongsToMany(Permission::class);
