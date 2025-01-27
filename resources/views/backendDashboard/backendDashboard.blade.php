@@ -42,7 +42,7 @@
         <div class="row">
             <div class="col col-lg-12 col-md-12 col-sm-12 mb-4">
                 <div class="card">
-                    <a href="#">
+                    <a href="{{ route('telescope') }}">
                         <h5 class="card-title">Telescope</h5>
                         <p class="card-description">Access all Metrices of your Backend.</p>
                     </a>

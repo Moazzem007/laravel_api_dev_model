@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Interfaces\PermissionRepositoryInterface;
 use App\Interfaces\RoleRepositoryInterface;
 use App\Interfaces\UserRepositoryInterface;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -37,6 +38,12 @@ class RolePermissionController extends Controller
     {
         $userRoles = $this->userRepository->getUserRoles($request->ID);
         return response()->json($userRoles);
+    }
+
+    public function getRolePermissions(Request $request)
+    {
+        $rolePermissions = $this->roleRepository->getRolePermissions($request->ID);
+        return response()->json($rolePermissions);
     }
 
 
@@ -78,5 +85,48 @@ class RolePermissionController extends Controller
 
         // Return success response
         return response()->json(['message' => 'Role assigned successfully.'], 200);
+    }
+
+
+    public function updateRolePermission(Request $request)
+    {
+        // Validate the permission input
+        $validated = $request->validate([
+            'permission' => 'required|string|exists:permissions,name',  // Validate that the permission exists
+        ]);
+
+        // Find the role by ID
+        $role = Role::find($request->roleId);
+
+        // Check if the role exists
+        if (!$role) {
+            return response()->json(['message' => 'Role not found.'], 404);
+        }
+
+        // Find the Permission
+        $permission = Permission::where('name', $validated['permission'])->first();
+
+        // Check if the Permission exists
+        if (!$permission) {
+            return response()->json(['message' => 'Permission not found.'], 404);
+        }
+
+        // Assign the Permission to the role
+        
+        if($request->status == 'true'){
+            if (!$role->permissions->contains($permission)) {
+                $role->permissions()->attach($permission);
+            }
+            return response()->json(['message' => 'Permission assigned successfully.'], 200);
+        }else{
+            if ($role->permissions->contains($permission)) {
+                $role->permissions()->detach($permission);
+            }
+            return response()->json(['message' => 'Permission revoked successfully.'], 200);
+        }
+        
+
+        // Return success response
+        return response()->json(['message' => 'Permission assigned successfully.'], 200);
     }
 }

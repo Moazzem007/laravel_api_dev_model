@@ -49,4 +49,9 @@ class RoleRepository implements RoleRepositoryInterface
         $role->delete();
         return $role;
     }
+
+    public function getRolePermissions($id)
+    {
+        return Role::findOrFail($id)->permissions;
+    }
 }

@@ -19,6 +19,7 @@ Route::group(['middleware' => ['logoutIfNotAuthenticated']], function () {
 // Authenticated routes
 Route::middleware('auth:web')->group(function () {
 
+    Route::get('/dashboard', [BackendController::class, 'index']);
     Route::get('/backend-dashboard', [BackendController::class, 'index']);
     Route::get('/user-list', [App\Http\Controllers\Backend\User\UserController::class, 'index'])->name('user-list');
     Route::get('/user-store', [App\Http\Controllers\Backend\User\UserController::class, 'store'])->name('user-store');
@@ -43,7 +44,9 @@ Route::middleware('auth:web')->group(function () {
     // Role permission mapping Web routes
     Route::get('/role-permission-list', [App\Http\Controllers\Backend\RolePermissionController::class, 'index'])->name('role-permission-list');
     Route::post('/get-user-roles', [App\Http\Controllers\Backend\RolePermissionController::class, 'getUserRoles'])->name('get-user-roles');
+    Route::post('/get-role-permissions', [App\Http\Controllers\Backend\RolePermissionController::class, 'getRolePermissions'])->name('get-role-permissions');
     Route::post('/update-user-role', [App\Http\Controllers\Backend\RolePermissionController::class, 'assignRole'])->name('update-user-role');
+    Route::post('/update-role-permission', [App\Http\Controllers\Backend\RolePermissionController::class, 'updateRolePermission'])->name('update-role-permission');
 
 });
 

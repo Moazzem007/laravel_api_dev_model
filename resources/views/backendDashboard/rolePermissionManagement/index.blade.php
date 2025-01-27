@@ -59,18 +59,18 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>SL</th>
+                    <th>ID</th>
                     <th>Role</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 @if($roles)
-                    @foreach($roles as $role)
+                    @foreach($roles as $key=>$role)
                         <tr>
                             <td class="role-id">{{ $role->id }}</td>
                             <td class="role-name">{{ $role->name }}</td>
-                            <td><input type="checkbox" class="role-status"></td>
+                            <td><input type="checkbox" class="form-check-input role-status"></td>
                         </tr>
                     @endforeach
                 @endif
@@ -81,37 +81,29 @@
     <div class="container">
         <h3 class="text-center mb-4">Assign Permission to Role</h3>
         <div class="mb-3">
-            <label for="selectRole" class="form-label">Select Role</label>
             <select id="selectRole" class="form-select">
-                <option selected disabled>Select Role</option>
-                <option value="1">Role 1</option>
-                <option value="2">Role 2</option>
+                <option>Select Role</option>
+                @foreach($roles as $role)
+                    <option value="{{$role->id}}">{{$role->name}}</option>
+                @endforeach
             </select>
         </div>
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>SL</th>
+                    <th>ID</th>
                     <th>Name</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Permission Name 1</td>
-                    <td><input type="checkbox" class="form-check-input"></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Permission Name 2</td>
-                    <td><input type="checkbox" class="form-check-input"></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Permission Name 3</td>
-                    <td><input type="checkbox" class="form-check-input"></td>
-                </tr>
+                @foreach($permissions as $key=>$permission)
+                    <tr>
+                        <td class="permission-id">{{$permission->id}}</td>
+                        <td class="permission-name">{{$permission->name}}</td>
+                        <td><input type="checkbox" class="form-check-input permission-status"></td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
@@ -126,6 +118,8 @@
 
     <script>
         $(document).ready(function() {
+
+            // Get roles assigned to the user selected
             $('#selectUser').change(function() {
                 var userId = $(this).val();
                 var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
@@ -157,11 +151,11 @@
                     }
                 });
             });
-        });
+        
 
 
         // Update role for user
-        $('.role-status').on('change', function() {
+        $('.role-status').off('change').on('change', function() {
             var userId = $('#selectUser').val();
             var roleId = $(this).closest('tr').find('.role-id').text();
             var roleName = $(this).closest('tr').find('.role-name').text();
@@ -185,6 +179,70 @@
                 }
             });
         });
+
+
+
+        // Get permissions assigned to the role selected
+        $('#selectRole').change(function() {
+                var roleId = $(this).val();
+                var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                var url = '{{ route("get-role-permissions")}}';
+                $.ajax({
+                    type: 'POST',
+                    headers: {
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                    },
+                    url: url,
+                    data: {ID:roleId},
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log(data[0]);
+                        var permissionIds = data.map(permission => permission.id);
+                        $('.permission-id').each(function() {
+                            if (permissionIds.includes(parseInt($(this).text()))) {
+                                $(this).closest('tr').find('.permission-status').prop('checked', true);
+                            } else {
+                                $(this).closest('tr').find('.permission-status').prop('checked', false);
+                            }
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        $('.permission-id').each(function() {
+                            $(this).closest('tr').find('.permission-status').prop('checked', false);
+                        });
+                            console.error(xhr.responseText);
+                    }
+                });
+            });
+
+
+            // Update permission for role
+        $('.permission-status').off('change').on('change', function() {
+            var roleId = $('#selectRole').val();
+            var permissionId = $(this).closest('tr').find('.permission-id').text();
+            var permissionName = $(this).closest('tr').find('.permission-name').text();
+            var status = $(this).prop('checked');
+            
+            var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            var url = '{{ route("update-role-permission")}}';
+            $.ajax({
+                type: 'POST',
+                headers: {
+                'X-CSRF-TOKEN': CSRF_TOKEN
+                },
+                url: url,
+                data: {roleId:roleId, permissionId:permissionId, permission:permissionName, status:status},
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+
+    });
     </script>
 
 
