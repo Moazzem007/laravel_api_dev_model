@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Essa\APIToolKit\Api\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -11,6 +12,10 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+
+    use ApiResponse;
+
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -29,9 +34,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return response()->json([
-            'token' => $user->createToken('laravel-api-dev-model')->accessToken
-        ]);
+        return $this->responseSuccess('User created successfully', $user);
     }
 
     // Login and issue token
@@ -41,11 +44,18 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
-            return response()->json([
-                'token' => $user->createToken('laravel-api-dev-model')->accessToken  //Define your app name here
-            ]);
+            $token = $user->createToken('laravel-api-dev-model')->accessToken;
+
+            $data = [
+                'user' => $user,
+                'token' => $token
+            ];
+
+            return $this->responseSuccess('User logged in successfully', $data);
+            
+
         } else {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return $this->responseWithCustomError('Error', 'Something went wrong', 422);
         }
     }
 }

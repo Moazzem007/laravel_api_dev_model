@@ -29,15 +29,10 @@ Route::middleware(['auth:api', 'permission:all_permission'])->group(function () 
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('permissions', PermissionController::class);
 });
-// Route::middleware(['auth:api', 'permission:assign_roles'])->group(function () {
+
+
+// Route::middleware(['auth:api', 'permission:example_permission_name'])->group(function () {
     
 // });
-// Route::middleware(['auth:api', 'permission:assign_permissions'])->group(function () {
-    
-// });
-// Route::middleware(['auth:api', 'permission:view_roles'])->group(function () {
-    
-// });
-// Route::middleware(['auth:api', 'permission:view_permissions'])->group(function () {
-    
-// });
+
+

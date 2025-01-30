@@ -1,7 +1,6 @@
 <?php
 
 use Essa\APIToolKit\Enum\GeneratorFilesType;
-
 return [
     /*
     |--------------------------------------------------------------------------
@@ -65,6 +64,9 @@ return [
     | custom groups, specifying where the generated files will be stored.
     |
     */
+
+    
+
     'groups_files_paths' => [
         'default' => [
             GeneratorFilesType::MODEL => [
