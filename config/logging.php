@@ -126,6 +126,15 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+        'api_errors' => [
+            'path' => storage_path('logs/api_errors.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
+        'web_errors' => [
+           'driver' => 'single',
+           'path' => 'storage/logs/web_errors.log', // Specify the desired file path
+           'level' => 'error'  // Only log errors to this channel
+        ],
 
     ],
 

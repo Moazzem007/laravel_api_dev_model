@@ -52,5 +52,14 @@ class DatabaseSeeder extends Seeder
 
         // Assign the role to the user
         $user->assignRole($role);
+
+
+        Role::create([
+            'name' => 'General User'
+        ]);
+
+        Permission::create([
+            'name' => 'user_permission'
+        ]);
     }
 }

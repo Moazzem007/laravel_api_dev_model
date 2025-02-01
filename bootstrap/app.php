@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -22,26 +23,158 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         
         // // // This code block handles all the exceptions thrown by the application
-        // $exceptions->renderable(function (Exception $e, Request $request) {
-        //     if ($request->is('api/*')) {
-        //         // Please search for the error message in the log file stored in the storage/logs directory
-        //         Log::error($e->getMessage());
-        //         return response()->json([
-        //             'message' => 'Sorry, We were unable to process the request at this moment. Please try again later.'
-        //         ], 404);
-        //     }else if($request->is('*')){
-        //         return response()->view('errors.404', [], 404);
-        //     }
+        $exceptions->renderable(function (Exception $e, Request $request) {
+            if ($request->is('api/*')) {
+                // Please search for the error message in the log file stored in the storage/logs directory
+                Log::error($e->getMessage());
+                if(app()->environment('local')){
+                    $responseData = [
+                        'errors' => [
+                            [
+                                'status' => 500,
+                                'title' => 'error',
+                                'detail' => $e->getMessage(),
+                            ],
+                        ],
+                    ];
             
-        // });
+                    // Set the Content-Type header to specify JSON problem format.
+                    $headers = [
+                        'Content-Type' => 'application/problem+json',
+                    ];
+                    return new JsonResponse($responseData, 500, $headers);
+                }else{
+                    $responseData = [
+                        'errors' => [
+                            [
+                                'status' => 500,
+                                'title' => 'error',
+                                'detail' => 'Oops! Something went wrong. Please try again later.',
+                            ],
+                        ],
+                    ];
+            
+                    // Set the Content-Type header to specify JSON problem format.
+                    $headers = [
+                        'Content-Type' => 'application/problem+json',
+                    ];
+                    return new JsonResponse($responseData, 500, $headers);
+                }
+                
+            }else if($request->is('*')){
+                Log::error($e->getMessage());
+                if(app()->environment('local')){
+                    $responseData = [
+                        'errors' => [
+                            [
+                                'status' => 500,
+                                'title' => 'error',
+                                'detail' => $e->getMessage(),
+                            ],
+                        ],
+                    ];
+            
+                    // Set the Content-Type header to specify JSON problem format.
+                    $headers = [
+                        'Content-Type' => 'application/problem+json',
+                    ];
+                    return new JsonResponse($responseData, 500, $headers);
+                }else{
+                    $responseData = [
+                        'errors' => [
+                            [
+                                'status' => 500,
+                                'title' => 'error',
+                                'detail' => 'Oops! Something went wrong. Please try again later.',
+                            ],
+                        ],
+                    ];
+            
+                    // Set the Content-Type header to specify JSON problem format.
+                    $headers = [
+                        'Content-Type' => 'application/problem+json',
+                    ];
+                    return new JsonResponse($responseData, 500, $headers);
+                }
+                
+            }
+            
+        });
         // // // This code block handles all the errors thrown by the application
-        // $exceptions->renderable(function (Throwable $e, Request $request) {
-        //     if ($request->is('api/*')) {
-        //         // Please search for the error message in the log file stored in the storage/logs directory
-        //         Log::error($e->getMessage());
-        //         return response()->json([
-        //             'message' => 'Sorry, We were unable to process the request at this moment. Please try again later.'
-        //         ], 500);
-        //     }
-        // });
+        $exceptions->renderable(function (Throwable $e, Request $request) {
+            if ($request->is('api/*')) {
+                // Please search for the error message in the log file stored in the storage/logs directory
+                Log::error($e->getMessage());
+                if(app()->environment('local')){
+                    $responseData = [
+                        'errors' => [
+                            [
+                                'status' => 500,
+                                'title' => 'error',
+                                'detail' => $e->getMessage(),
+                            ],
+                        ],
+                    ];
+            
+                    // Set the Content-Type header to specify JSON problem format.
+                    $headers = [
+                        'Content-Type' => 'application/problem+json',
+                    ];
+                    return new JsonResponse($responseData, 500, $headers);
+                }else{
+                    $responseData = [
+                        'errors' => [
+                            [
+                                'status' => 500,
+                                'title' => 'error',
+                                'detail' => 'Oops! Something went wrong. Please try again later.',
+                            ],
+                        ],
+                    ];
+            
+                    // Set the Content-Type header to specify JSON problem format.
+                    $headers = [
+                        'Content-Type' => 'application/problem+json',
+                    ];
+                    return new JsonResponse($responseData, 500, $headers);
+                }
+                
+            }else if($request->is('*')){
+                Log::error($e->getMessage());
+                if(app()->environment('local')){
+                    $responseData = [
+                        'errors' => [
+                            [
+                                'status' => 500,
+                                'title' => 'error',
+                                'detail' => $e->getMessage(),
+                            ],
+                        ],
+                    ];
+            
+                    // Set the Content-Type header to specify JSON problem format.
+                    $headers = [
+                        'Content-Type' => 'application/problem+json',
+                    ];
+                    return new JsonResponse($responseData, 500, $headers);
+                }else{
+                    $responseData = [
+                        'errors' => [
+                            [
+                                'status' => 500,
+                                'title' => 'error',
+                                'detail' => 'Oops! Something went wrong. Please try again later.',
+                            ],
+                        ],
+                    ];
+            
+                    // Set the Content-Type header to specify JSON problem format.
+                    $headers = [
+                        'Content-Type' => 'application/problem+json',
+                    ];
+                    return new JsonResponse($responseData, 500, $headers);
+                }
+                
+            }
+        });
     })->create();

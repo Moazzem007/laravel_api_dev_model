@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use Essa\APIToolKit\Api\ApiResponse;
 use Illuminate\Http\Request;
@@ -33,6 +35,23 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        // Attaching permission to role
+        $role = Role::where('name', 'General User')->first();
+
+        // Find the permission
+        $permission = Permission::where('name', 'user_permission')->first();
+
+        // Attach the permission to the role if not already assigned
+        if (!$role->permissions->contains($permission)) {
+            $role->permissions()->attach($permission);
+        }
+
+        // Find the role
+        $role = Role::where('name', $role->name)->first();
+
+        // Assign the role to the user
+        $user->assignRole($role);
 
         return $this->responseSuccess('User created successfully', $user);
     }

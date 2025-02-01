@@ -21,7 +21,7 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 
 
-
+// admin routes
 Route::middleware(['auth:api', 'permission:all_permission'])->group(function () {
     Route::apiResource('users', UserController::class);
     Route::post('users/{user}/assign-role', [UserController::class, 'assignRole']);
@@ -30,10 +30,10 @@ Route::middleware(['auth:api', 'permission:all_permission'])->group(function () 
     Route::apiResource('permissions', PermissionController::class);
 });
 
-
-// Route::middleware(['auth:api', 'permission:example_permission_name'])->group(function () {
+// Regular user routes
+Route::middleware(['auth:api', 'permission:user_permission'])->group(function () {
     
-// });
+});
 
 
 

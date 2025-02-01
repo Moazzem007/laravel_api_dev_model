@@ -17,7 +17,7 @@ Route::group(['middleware' => ['logoutIfNotAuthenticated']], function () {
     // })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Authenticated routes
-Route::middleware('auth:web')->group(function () {
+Route::middleware('auth:web', 'permission:all_permission')->group(function () {
 
     Route::get('/dashboard', [BackendController::class, 'index']);
     Route::get('/backend-dashboard', [BackendController::class, 'index']);
@@ -47,6 +47,11 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/get-role-permissions', [App\Http\Controllers\Backend\RolePermissionController::class, 'getRolePermissions'])->name('get-role-permissions');
     Route::post('/update-user-role', [App\Http\Controllers\Backend\RolePermissionController::class, 'assignRole'])->name('update-user-role');
     Route::post('/update-role-permission', [App\Http\Controllers\Backend\RolePermissionController::class, 'updateRolePermission'])->name('update-role-permission');
+
+});
+
+
+Route::middleware('auth:web', 'permission:user_permission')->group(function () {
 
 });
 

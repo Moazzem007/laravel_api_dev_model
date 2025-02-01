@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\User;
 
 use App\Http\Controllers\Controller;
 use App\Interfaces\UserRepositoryInterface;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -66,12 +67,27 @@ class UserController extends Controller
             'password' => Hash::make($request->string('password')),
         ]);
 
-        // event(new Registered($user));
+        // Attaching permission to role
+        $role = Role::where('name', 'General User')->first();
 
-        // Auth::login($user);
+        // Find the permission
+        $permission = Permission::where('name', 'user_permission')->first();
+
+        // Attach the permission to the role if not already assigned
+        if (!$role->permissions->contains($permission)) {
+            $role->permissions()->attach($permission);
+        }
+
+        // Find the role
+        $role = Role::where('name', $role->name)->first();
+
+        // Assign the role to the user
+        $user->assignRole($role);
 
         $users = $this->userRepository->usersWithRoles();
+
         $allRoles = Role::all();
+        
         return view('backendDashboard.user.index', compact('users', 'allRoles'));
     }
 
