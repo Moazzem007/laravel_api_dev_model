@@ -36,3 +36,11 @@ Route::middleware(['auth:api', 'permission:all_permission'])->group(function () 
 // });
 
 
+
+/*===========================
+=           customers           =
+=============================*/
+// Note: This is a test api route
+Route::apiResource('/customers', \App\Http\Controllers\API\CustomerController::class);
+
+/*=====  End of customers   ======*/
