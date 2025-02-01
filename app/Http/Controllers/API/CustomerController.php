@@ -19,7 +19,7 @@ class CustomerController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
-        $customers = Customerr::useFilters()->dynamicPaginate();
+        $customers = Customer::useFilters()->dynamicPaginate();
 
         return CustomerResource::collection($customers);
     }
