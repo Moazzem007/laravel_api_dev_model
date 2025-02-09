@@ -17,6 +17,12 @@ class CustomerController extends Controller
 
     }
 
+    // Add this annotation to the controller if filtering is enabled
+
+    /**
+     * Get a list of customers with optional filters.
+     */
+
     public function index(): AnonymousResourceCollection
     {
         $customers = Customer::useFilters()->dynamicPaginate();
@@ -49,4 +55,7 @@ class CustomerController extends Controller
 
         return $this->responseDeleted();
     }
+    
+
+    
 }
